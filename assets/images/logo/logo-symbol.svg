@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Naimap">
+  <!-- Symbol-only mark, unmodified from the master app-icon artwork (naimap-icon-source.svg).
+       Used for favicon / browser tab / manifest / apple-touch-icon contexts, where an
+       icon-tile treatment (opaque rounded-square ground) is the expected convention. -->
+  <rect width="100" height="100" rx="22.37" fill="#F4F6FB"/>
+  <line x1="16.5" y1="18.7" x2="16.5" y2="84.2" stroke="#10254B" stroke-width="3.6" stroke-linecap="round"/>
+  <line x1="82" y1="18.7" x2="82" y2="84.2" stroke="#10254B" stroke-width="3.6" stroke-linecap="round"/>
+  <line x1="16.5" y1="84.2" x2="82" y2="18.7" stroke="#10254B" stroke-width="3.88" stroke-linecap="round"/>
+  <circle cx="16.5" cy="18.7" r="4.5" fill="#10254B"/>
+  <circle cx="16.5" cy="84.2" r="4.5" fill="#10254B"/>
+  <circle cx="82" cy="84.2" r="4.5" fill="#10254B"/>
+  <circle cx="82" cy="18.7" r="4.7" fill="#7C5CFC"/>
+</svg>

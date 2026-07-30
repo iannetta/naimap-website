@@ -113,7 +113,7 @@ naimap-website/
     ├── js/
     │   └── main.js
     └── images/
-        ├── logo/
+        ├── logo/     (logo-symbol.svg, logo-horizontal.svg, logo-horizontal-dark.svg, master source SVG)
         ├── icons/
         ├── social/
         └── screenshots/
@@ -126,6 +126,20 @@ Every page shares the same header, footer, and design tokens by duplicating that
 ## Screenshots
 
 All App Store screenshots used across the site (Home gallery, Features page, social preview images) live in `assets/images/screenshots/` and are the same assets submitted to the App Store, so the site and the App Store listing always show the same product. Each PNG has a matching `.webp` served via `<picture>` for smaller downloads, with the PNG as a universal fallback.
+
+## Branding
+
+The app icon and the website logo are deliberately separate assets, built from the same source artwork (`assets/images/logo/naimap-icon-source.svg`, the master file also used to produce the shipped iOS app icon), so they stay visually related without either one compromising the other's context:
+
+| Asset | File | Used for |
+|---|---|---|
+| App Icon | `assets/images/icons/icon-*.png` | The iOS app only — **unchanged, do not touch from this repo** |
+| Website Symbol | `assets/images/logo/logo-symbol.svg` | Favicon, browser tab, manifest, apple-touch-icon — same tile-style composition as the app icon, since that convention is expected for those contexts |
+| Website Logo (horizontal) | `assets/images/logo/logo-horizontal.svg` / `logo-horizontal-dark.svg` | Standalone lockup (symbol + "Naimap" wordmark) for documentation, README badges, press kit, or any embed outside the live site's own CSS |
+
+The app icon's tile background (opaque rounded square) is the right call for a Home Screen icon, but reads as cramped at 24–32px next to a text label in a nav bar. The horizontal lockup instead crops to the mark's own bounding box — same line/circle coordinates as the master artwork, no redrawing, just a tighter viewBox — so it sits cleanly beside the wordmark the way a dedicated website logo should.
+
+**Live site implementation:** the header and footer don't reference `logo-horizontal.svg` as an image file. They inline the symbol as SVG markup directly in each page, using `currentColor` for the line work and `var(--accent)` for the violet node, immediately followed by the existing plain-text "Naimap" (unchanged from before — it was already correctly styled and theme-aware). That makes the mark automatically track the site's light/dark theme with no extra file, no JavaScript, and no flash of the wrong logo — the same mechanism already used for the sun/moon theme-toggle icon. The standalone `logo-horizontal.svg`/`logo-horizontal-dark.svg` files exist for contexts *outside* the live site (this README, a press kit, a slide deck) where that live CSS isn't available, so their colors are hardcoded instead.
 
 ## Known placeholders
 

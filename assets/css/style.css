@@ -368,7 +368,7 @@ button { cursor: pointer; background: none; border: none; }
   letter-spacing: -0.01em;
   flex: none;
 }
-.nav-brand img { width: 30px; height: 30px; border-radius: 8px; }
+.nav-brand svg { width: 30px; height: 30px; flex: none; }
 
 .nav-links {
   display: none;
@@ -932,7 +932,7 @@ button { cursor: pointer; background: none; border: none; }
   .footer-grid { grid-template-columns: 1.4fr repeat(3, 1fr); }
 }
 .footer-brand { display: flex; align-items: center; gap: var(--space-2xs); font-family: var(--font-display); font-weight: 800; margin-bottom: var(--space-sm); }
-.footer-brand img { width: 26px; height: 26px; border-radius: 7px; }
+.footer-brand svg { width: 26px; height: 26px; flex: none; }
 .footer-col h3 {
   font-family: var(--font-mono);
   font-size: var(--step-caption);

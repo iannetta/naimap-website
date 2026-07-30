@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 170 44" role="img" aria-label="Naimap">
+  <!--
+    Website horizontal lockup — for dark backgrounds (dark-themed embeds, slide decks,
+    social posts). Same geometry as logo-horizontal.svg; only the line/text color and
+    accent-node color swap to their existing dark-theme values (matching the site's own
+    text and accent color tokens in dark mode) so contrast holds on a dark ground.
+  -->
+  <g transform="translate(2,2) scale(0.454545) translate(-6,-7)">
+    <line x1="16.5" y1="18.7" x2="16.5" y2="84.2" stroke="#F4F6FB" stroke-width="3.6" stroke-linecap="round"/>
+    <line x1="82" y1="18.7" x2="82" y2="84.2" stroke="#F4F6FB" stroke-width="3.6" stroke-linecap="round"/>
+    <line x1="16.5" y1="84.2" x2="82" y2="18.7" stroke="#F4F6FB" stroke-width="3.88" stroke-linecap="round"/>
+    <circle cx="16.5" cy="18.7" r="4.5" fill="#F4F6FB"/>
+    <circle cx="16.5" cy="84.2" r="4.5" fill="#F4F6FB"/>
+    <circle cx="82" cy="84.2" r="4.5" fill="#F4F6FB"/>
+    <circle cx="82" cy="18.7" r="4.7" fill="#9B85FF"/>
+  </g>
+  <text x="54" y="23" dominant-baseline="middle" font-family="-apple-system,'SF Pro Display',BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="27" font-weight="800" letter-spacing="-0.3" fill="#F4F6FB">Naimap</text>
+</svg>

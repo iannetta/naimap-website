@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 170 44" role="img" aria-label="Naimap">
+  <!--
+    Website horizontal lockup — for light backgrounds (README, press kit, light-theme
+    embeds). Built directly from the master icon artwork (naimap-icon-source.svg):
+    the symbol group below reuses those exact line/circle coordinates unchanged inside
+    a repositioning transform, cropped to its own bounding box rather than the app
+    icon's full home-screen tile, so it reads cleanly at nav-bar sizes without the
+    icon-tile's rounded-square ground fighting the wordmark for space.
+    See logo-horizontal-dark.svg for the dark-background counterpart, and
+    logo-symbol.svg for the tile-style favicon/manifest asset.
+  -->
+  <g transform="translate(2,2) scale(0.454545) translate(-6,-7)">
+    <line x1="16.5" y1="18.7" x2="16.5" y2="84.2" stroke="#10254B" stroke-width="3.6" stroke-linecap="round"/>
+    <line x1="82" y1="18.7" x2="82" y2="84.2" stroke="#10254B" stroke-width="3.6" stroke-linecap="round"/>
+    <line x1="16.5" y1="84.2" x2="82" y2="18.7" stroke="#10254B" stroke-width="3.88" stroke-linecap="round"/>
+    <circle cx="16.5" cy="18.7" r="4.5" fill="#10254B"/>
+    <circle cx="16.5" cy="84.2" r="4.5" fill="#10254B"/>
+    <circle cx="82" cy="84.2" r="4.5" fill="#10254B"/>
+    <circle cx="82" cy="18.7" r="4.7" fill="#7C5CFC"/>
+  </g>
+  <text x="54" y="23" dominant-baseline="middle" font-family="-apple-system,'SF Pro Display',BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="27" font-weight="800" letter-spacing="-0.3" fill="#10254B">Naimap</text>
+</svg>
