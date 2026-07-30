@@ -1,6 +1,9 @@
 # Naimap Website
 
-The official marketing website for **Naimap**, a native iOS mind-mapping app for iPhone and iPad. Live (once deployed) at `https://naimap.app`.
+The official marketing website for **Naimap**, a native iOS mind-mapping app for iPhone and iPad.
+
+- **Live now:** https://iannetta.github.io/naimap-website/
+- **Future home:** https://naimap.app (not active yet — see [Migrating to a custom domain](#migrating-to-a-custom-domain))
 
 This repository contains the site only — not the Naimap app itself.
 
@@ -18,6 +21,28 @@ Plain, dependency-free web fundamentals:
 
 There is **no build step**. What's in this repository is exactly what gets served. The only external dependencies are the system font stack (no web fonts are loaded) and the App Store badge, which is why the site works instantly on GitHub Pages with zero configuration.
 
+## Path strategy — why every link is relative
+
+Every internal reference in this site — stylesheet, script, images, icons, manifest, and page-to-page links — uses a **repository-relative path** (`./assets/css/style.css`, `./features.html`, `./index.html#pro`, etc.), never a root-absolute one (`/assets/...`).
+
+This is deliberate, and it's the reason the exact same files work unmodified in all of these environments:
+
+| Environment | Example URL | Why relative paths work |
+|---|---|---|
+| Opened directly (`file://`) | `file:///.../naimap-website/index.html` | `./assets/...` resolves next to the file, wherever it sits on disk |
+| Local static server, served from repo root | `http://localhost:8000/index.html` | `./assets/...` resolves against `/`, same result |
+| GitHub Pages project site (current) | `https://iannetta.github.io/naimap-website/index.html` | `./assets/...` resolves against `/naimap-website/`, matching the subpath |
+| Future custom domain | `https://naimap.app/index.html` | `./assets/...` resolves against `/`, same as local — **zero changes needed** |
+
+A root-absolute path like `/assets/css/style.css` would have silently pointed at `https://iannetta.github.io/assets/css/style.css` (missing the `/naimap-website/` subpath) — the actual bug this structure fixes.
+
+**Homepage section anchors** (Features, Screenshots, Pro, Download) follow the same logic: on `index.html` itself they're bare fragments (`href="#features"`, since the target is on the current page), and from every other page they're `./index.html#features` (navigate to the homepage, then jump to the section).
+
+**The one documented exception — `404.html`:** GitHub Pages serves `404.html`'s *content* for any unmatched URL under the project, but the browser's address bar keeps the original, non-existent URL — which can be nested at an arbitrary, unknowable depth (e.g. `/naimap-website/typo`, or in principle `/naimap-website/a/b/c`). Relative paths can only resolve correctly against a *known* depth, so:
+- For the realistic case on this site — a mistyped or removed top-level URL, since no real page here is ever nested in a subdirectory — `404.html`'s relative paths resolve at the same depth as every other page and load correctly (verified below).
+- For an artificially deep, non-existent URL that nothing on this site ever links to, `404.html` would still render its full text content (the "page not found" message and all links stay in the HTML and are readable), but its stylesheet and the "Back to home" style links would point at the wrong depth until the visitor's next click.
+- The alternative (a hardcoded `<base>` tag pointing at `/naimap-website/`) was deliberately **not** used: it would have fixed that rare deep-URL case but broken local `file://`/plain-server preview of `404.html` itself, and would need a manual edit at custom-domain migration time. Given the trade-off, matching every other page's plain relative-path behavior was the safer default.
+
 ## Running locally
 
 Because there's no build step, any static file server works. From the repository root:
@@ -30,15 +55,40 @@ python -m http.server 8000
 npx serve .
 ```
 
-Then open `http://localhost:8000`. Opening the HTML files directly via `file://` mostly works too, but a local server avoids edge cases with absolute paths (`/assets/...`).
+Then open `http://localhost:8000/`. Opening the HTML files directly via `file://` (double-clicking `index.html`) also works correctly, including CSS, images, and navigation, since nothing depends on a server root.
+
+To sanity-check the GitHub Pages subpath behavior specifically before pushing, you can nest a copy of the repo one level deep and serve *that* directory:
+
+```bash
+mkdir -p /tmp/ghsim/naimap-website
+cp -r . /tmp/ghsim/naimap-website/        # excluding .git
+cd /tmp/ghsim && python -m http.server 8000
+# then browse http://localhost:8000/naimap-website/
+```
 
 ## Deploying to GitHub Pages
 
-1. Push this repository to GitHub.
+1. Push this repository to GitHub as `iannetta/naimap-website` (the URLs below assume this exact repo name — see below if it differs).
 2. In the repo, go to **Settings → Pages**.
 3. Under **Build and deployment**, set **Source** to `Deploy from a branch`, branch `main`, folder `/ (root)`.
-4. Save. GitHub will publish the site at `https://<username>.github.io/<repo>/` within a minute or two.
-5. For a custom domain (e.g. `naimap.app`): add a `CNAME` file at the repo root containing the domain, and configure your DNS provider with the records GitHub Pages documents for apex/subdomain hosting. Then set the custom domain in the same **Pages** settings screen.
+4. Save. GitHub will publish the site at **https://iannetta.github.io/naimap-website/** within a minute or two.
+5. No further configuration is needed — every path in this repo is relative, so the site works immediately under that subpath.
+
+If you fork or rename the repository, the site still works unmodified at whatever subpath GitHub assigns — only the **absolute** URLs used for SEO (canonical links, Open Graph/Twitter meta tags, `sitemap.xml`, `robots.txt`) would need updating to match, since those must be fully-qualified per spec and can't be relative. Search for `iannetta.github.io/naimap-website` across the repo to find every instance.
+
+## Migrating to a custom domain
+
+When `naimap.app` (or another domain) is ready:
+
+1. Add a `CNAME` file at the repo root containing just the domain, e.g. `naimap.app`.
+2. Configure DNS with your provider per [GitHub's custom domain docs](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site) (an `ALIAS`/`ANAME`/`A` record set for an apex domain, or a `CNAME` record for a subdomain).
+3. Set the custom domain in **Settings → Pages** and enable **Enforce HTTPS** once it's available.
+4. Update every absolute SEO URL from `https://iannetta.github.io/naimap-website/...` to `https://naimap.app/...`. These are the only paths in the repo that are absolute by necessity (spec requirement for canonical/OG/Twitter tags and for sitemap/robots entries) — every asset and internal page link is already relative and needs **no change**:
+   - `<link rel="canonical">`, `og:url`, `og:image`, `twitter:image` in all 9 `<head>` blocks
+   - The `url` and `image` fields in `index.html`'s JSON-LD block
+   - Every `<loc>` in `sitemap.xml`
+   - The `Sitemap:` line in `robots.txt`
+5. No change is needed to `site.webmanifest`, `assets/`, or any page-to-page link — they're relative to the manifest/page location, not the domain.
 
 ## Folder structure
 
@@ -53,6 +103,7 @@ naimap-website/
 ├── changelog.html
 ├── contact.html
 ├── 404.html
+├── favicon.ico
 ├── robots.txt
 ├── sitemap.xml
 ├── site.webmanifest
@@ -64,27 +115,28 @@ naimap-website/
     └── images/
         ├── logo/
         ├── icons/
+        ├── social/
         └── screenshots/
-            ├── iphone/
-            └── ipad/
+            ├── iphone/   (PNG + WebP, plus a resized -hero variant)
+            └── ipad/     (PNG + WebP, plus a resized -hero variant)
 ```
 
-Every page shares the same header, footer, and design tokens by duplicating that markup at the top/bottom of each file — there's no templating engine, so consistency across pages is maintained by hand. When editing the header, footer, or nav, update all pages together.
+Every page shares the same header, footer, and design tokens by duplicating that markup at the top/bottom of each file — there's no templating engine, so consistency across pages is maintained by hand. When editing the header, footer, or nav, update all pages together, keeping every internal `href`/`src` relative (`./...`), never root-absolute (`/...`).
 
 ## Screenshots
 
-All App Store screenshots used across the site (Home gallery, Features page, social preview images) live in `assets/images/screenshots/` and are the same assets submitted to the App Store, so the site and the App Store listing always show the same product.
+All App Store screenshots used across the site (Home gallery, Features page, social preview images) live in `assets/images/screenshots/` and are the same assets submitted to the App Store, so the site and the App Store listing always show the same product. Each PNG has a matching `.webp` served via `<picture>` for smaller downloads, with the PNG as a universal fallback.
 
 ## Known placeholders
 
-A few values in this repository are placeholders until the app and site are actually live, and should be replaced before or shortly after launch:
+A few values in this repository are placeholders until the app and site are actually live, and should be replaced before or shortly after App Store approval:
 
 | Placeholder | Where | Replace with |
 |---|---|---|
-| `https://naimap.app` | canonical URLs, Open Graph, Twitter Card, JSON-LD, sitemap.xml, robots.txt | the real deployed domain |
-| `https://apps.apple.com/app/naimap` | App Store CTA buttons | the real App Store listing URL |
-| `support@naimap.app`, `privacy@naimap.app` | mailto links across all pages | real, monitored inboxes |
-| `https://github.com/iannetta/naimap-website` | footer GitHub links | the real repository URL, once created |
+| `https://iannetta.github.io/naimap-website` | canonical URLs, Open Graph, Twitter Card, JSON-LD, `sitemap.xml`, `robots.txt` | `https://naimap.app` once the custom domain is live — see [Migrating to a custom domain](#migrating-to-a-custom-domain) |
+| `https://apps.apple.com/app/naimap` | App Store CTA buttons (hero, footer, Pro section) | the real App Store listing URL, **only after the app is approved** — until then this is a dead link by necessity, since the app isn't live; it doesn't break site navigation (it's an external link, not used for any internal routing) |
+| `support@naimap.app`, `privacy@naimap.app` | `mailto:` links across all pages | real, monitored inboxes |
+| `https://github.com/iannetta/naimap-website` | footer GitHub links | already correct if this repo is pushed under that exact name; update if renamed |
 | Testimonials on the homepage | `index.html`, marked with an HTML comment | real user quotes, once available |
 | The "Download on the App Store" badge | `index.html` (inline SVG) | Apple's official badge asset, once available in this environment |
 
@@ -94,7 +146,7 @@ This is currently a single-maintainer project. If you spot a bug or have a sugge
 
 1. Open an issue describing the problem or idea.
 2. For content fixes (typos, broken links), a pull request against the relevant `.html` file is welcome.
-3. For design or structural changes, please open an issue first to discuss — the site intentionally avoids frameworks and build tooling, and changes should keep that constraint.
+3. For design or structural changes, please open an issue first to discuss — the site intentionally avoids frameworks and build tooling, and changes should keep that constraint, including the relative-path convention described above.
 
 ## License
 
@@ -102,4 +154,4 @@ Copyright © Naimap. All rights reserved. The site's HTML/CSS/JS structure may b
 
 ## Roadmap
 
-This website will grow alongside the app — see [roadmap.html](roadmap.html) for what's planned for Naimap itself. For the site specifically, expected future additions include real testimonials, the official App Store badge asset, and a custom domain.
+This website will grow alongside the app — see [roadmap.html](roadmap.html) for what's planned for Naimap itself. For the site specifically, expected future additions include real testimonials, the official App Store badge asset, and the custom domain migration described above.
